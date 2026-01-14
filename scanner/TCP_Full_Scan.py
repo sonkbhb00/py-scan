@@ -1,18 +1,15 @@
-import scapy.all as scapy
+import socket
 
 def TCP_Full_Scan(target_ip, target_ports):
     
     open_ports = []
     for port in target_ports:
-        packet = scapy.IP(dst=target_ip)/scapy.TCP(dport=port, flags="S")
-        response = scapy.sr1(packet, timeout=1, verbose=0)
-        
-        if response and response.haslayer(scapy.TCP):
-            if response.getlayer(scapy.TCP).flags == 0x12:  # SYN-ACK
-                open_ports.append(port)
-                # Send RST to close the connection
-                rst_packet = scapy.IP(dst=target_ip)/scapy.TCP(dport=port, flags="R")
-                scapy.send(rst_packet, verbose=0)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(1)
+        result = sock.connect_ex((target_ip, port))
+        if result == 0:
+            open_ports.append(port)
+        sock.close()
 
     return open_ports
 
