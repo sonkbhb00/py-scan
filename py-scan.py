@@ -1,7 +1,9 @@
 import argparse
 import socket
 import threading
+
 from scanner import TCP_Full_Scan, SYN_Stealth_Scan
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -24,8 +26,9 @@ def main():
     if not any([args.sT, args.sS, args.sA, args.sN, args.sX]):
         args.sT = True  # Default to TCP Connect scan if no scan type is specified.
     
+    # Resolve hostname to IP if necessary
     try:
-        args.target = socket.gethostbyname(args.target)
+        args.target = socket.gethostbyname(args.target) 
     except socket.gaierror:
         print(f"Error: Cannot resolve hostname '{args.target}'")
         return
@@ -59,3 +62,4 @@ def domain_to_ip(domain):
 
 if __name__ == "__main__":
     main()
+    
