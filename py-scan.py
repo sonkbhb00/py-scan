@@ -1,6 +1,7 @@
 import argparse
 import os
 import socket
+import time
 
 from scanner import TCP_Full_Scan, SYN_Stealth_Scan, Ack_Full_Scan, Xmas_Scan, Null_Scan
 from utils.banner_grapping import grab_banners
@@ -85,33 +86,48 @@ def main():
     print()
     
     if args.sT:
+        start_time = time.time()
         open_ports = TCP_Full_Scan(args.target, ports, timeout=config['timeout'], delay=config['delay'], parallel=config['parallel'])
+        elapsed_time = time.time() - start_time
         print(f"\nScan complete!")
-        print(f"Open ports: {open_ports if open_ports else 'None'}")
+        print(f"Open ports ({len(open_ports) if open_ports else 0}): {open_ports if open_ports else 'None'}")
+        print(f"Scan duration: {elapsed_time:.2f}s")
         if args.version and open_ports:
             print_banners(args.target, open_ports)
     elif args.sS:
+        start_time = time.time()
         open_ports = SYN_Stealth_Scan(args.target, ports, timeout=config['timeout'], delay=config['delay'], parallel=config['parallel'])
+        elapsed_time = time.time() - start_time
         print(f"\nScan complete!")
-        print(f"Open ports: {open_ports if open_ports else 'None'}")
+        print(f"Open ports ({len(open_ports) if open_ports else 0}): {open_ports if open_ports else 'None'}")
+        print(f"Scan duration: {elapsed_time:.2f}s")
         if args.version and open_ports:
             print_banners(args.target, open_ports)
     elif args.sA:
+        start_time = time.time()
         unfiltered_ports, filtered_ports = Ack_Full_Scan(args.target, ports, timeout=config['timeout'], delay=config['delay'], parallel=config['parallel'])
+        elapsed_time = time.time() - start_time
         print(f"\nScan complete!")
-        print(f"Unfiltered ports: {unfiltered_ports if unfiltered_ports else 'None'}")
-        print(f"Filtered ports: {filtered_ports if filtered_ports else 'None'}")
+        print(f"Unfiltered ports ({len(unfiltered_ports) if unfiltered_ports else 0}): {unfiltered_ports if unfiltered_ports else 'None'}")
+        print(f"Filtered ports ({len(filtered_ports) if filtered_ports else 0}): {filtered_ports if filtered_ports else 'None'}")
+        print(f"Scan duration: {elapsed_time:.2f}s")
     elif args.sX:
+        start_time = time.time()
         closed_ports, open_filtered_ports = Xmas_Scan(args.target, ports, timeout=config['timeout'], delay=config['delay'], parallel=config['parallel'])
+        elapsed_time = time.time() - start_time
         print(f"\nScan complete!")
-        print(f"Closed ports: {closed_ports if closed_ports else 'None'}")
-        print(f"Open|Filtered ports: {open_filtered_ports if open_filtered_ports else 'None'}")
+        print(f"Closed ports ({len(closed_ports) if closed_ports else 0}): {closed_ports if closed_ports else 'None'}")
+        print(f"Open|Filtered ports ({len(open_filtered_ports) if open_filtered_ports else 0}): {open_filtered_ports if open_filtered_ports else 'None'}")
+        print(f"Scan duration: {elapsed_time:.2f}s")
     elif args.sN:
+        start_time = time.time()
         closed_ports, open_filtered_ports, filtered_ports = Null_Scan(args.target, ports, timeout=config['timeout'], delay=config['delay'], parallel=config['parallel'])
+        elapsed_time = time.time() - start_time
         print(f"\nScan complete!")
-        print(f"Closed ports: {closed_ports if closed_ports else 'None'}")
-        print(f"Open|Filtered ports: {open_filtered_ports if open_filtered_ports else 'None'}")
-        print(f"Filtered ports: {filtered_ports if filtered_ports else 'None'}")
+        print(f"Closed ports ({len(closed_ports) if closed_ports else 0}): {closed_ports if closed_ports else 'None'}")
+        print(f"Open|Filtered ports ({len(open_filtered_ports) if open_filtered_ports else 0}): {open_filtered_ports if open_filtered_ports else 'None'}")
+        print(f"Filtered ports ({len(filtered_ports) if filtered_ports else 0}): {filtered_ports if filtered_ports else 'None'}")
+        print(f"Scan duration: {elapsed_time:.2f}s")
 
 def print_banners(target, open_ports):
     print("\n[Version Detection - Banner Grabbing]")
